@@ -126,4 +126,3 @@ plt.plot(x,x_9, label = "9th Order")
 plt.plot(x,x_11, label = "11th Order")
 plt.legend()
 plt.show()
-                     
