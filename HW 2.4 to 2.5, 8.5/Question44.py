@@ -1,6 +1,8 @@
+from cmath import pi
 import unittest
 import numpy
 import sympy
+import math
 
 
 def getRiemannQuadrature( num_points ):
@@ -22,14 +24,9 @@ def riemannQuadrature( fun, num_points ):
     y = [0] * num_points
     total = 0
     for i in range(num_points):
-        y[i] = fun.subs(s, x[i])
+        y[i] = fun(x[i])
         total += y[i] * w[i]
-    return total
-
-#x = sympy.symbols('x')
-#expr = x**1
-#print(riemannQuadrature( fun = expr, num_points = 3))
-
+    return total          
 
 class Test_getRiemannQuadrature( unittest.TestCase ):
     def test_zero_points( self ):
