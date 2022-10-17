@@ -17,8 +17,8 @@ def generateMesh1D( xmin, xmax, num_elems, degree):
     
     ien_array = np.array(ien_array)
 
-    print(node_coords)
-    print(ien_array)
+    #print(node_coords)
+    #print(ien_array)
 
     return node_coords, ien_array
 

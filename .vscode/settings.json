@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./HW 2.4 to 2.5, 8.5",
+        "./HW 3.2, 8.6 to 8.7"
+    ]
+}
