@@ -42,8 +42,8 @@ def plotPieceWise(func, min, max, num_elems, degree, resolution):
 
     plt.show()
 
-plotPieceWise(lambda x : x, -1, 1, 5, 2, 10)
-plotPieceWise(lambda x : x**2, -1, 1, 5, 2, 10)
-plotPieceWise(lambda x : numpy.sin(numpy.pi * x), -1, 1, 5, 2, 10)
-plotPieceWise(lambda x : numpy.exp(x), -1, 1, 5, 2, 10)
-plotPieceWise(lambda x : sympy.erfc(x), -1, 1, 5, 2, 10)
+# plotPieceWise(lambda x : x, -1, 1, 5, 2, 10)
+# plotPieceWise(lambda x : x**2, -1, 1, 5, 2, 10)
+# plotPieceWise(lambda x : numpy.sin(numpy.pi * x), -1, 1, 5, 2, 10)
+# plotPieceWise(lambda x : numpy.exp(x), -1, 1, 5, 2, 10)
+# plotPieceWise(lambda x : sympy.erfc(x), -1, 1, 5, 2, 10)
