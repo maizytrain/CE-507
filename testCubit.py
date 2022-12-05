@@ -5,8 +5,8 @@ if __name__ == "CubitPythonInterpreter_2":
     pass
 else:
     sys.path.append("/Applications/Coreform-Cubit-2022.11.app/Contents/MacOS")
-import cubit
-cubit.init([])
+    import cubit
+    cubit.init([])
 
 cubit.cmd( "reset" )
 # Create geometry
