@@ -15,8 +15,8 @@ def createBernsteinBasis1D(degree, basis_idx):
     expr = scalar * zeta ** basis_idx * (1 - zeta) ** (degree - basis_idx)
     return expr
 
-print(evaluateBernsteinBasis1D(0,2,0))
-print(createBernsteinBasis1D(2,0))
+# print(evaluateBernsteinBasis1D(0,2,0))
+# print(createBernsteinBasis1D(2,0))
 
 class Test_evaluateBernsteinBasis1D( unittest.TestCase ):
     def test_linearBernstein( self ):
