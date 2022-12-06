@@ -109,3 +109,11 @@ def uniquetol( input_array, tol ):
             if abs( input_array[ i ] - input_array[ j ] ) <= tol:
                 equalityArray[i] = True
     return input_array[ ~equalityArray ]
+
+def getDomain( uspline_bext ):
+    ida = elemIdFromElemIdx(uspline_bext, 0)
+    idb = elemIdFromElemIdx(uspline_bext, getNumElems(uspline_bext) - 1)
+    a = getElementDomain(uspline_bext, ida)[0]
+    b = getElementDomain(uspline_bext, idb)[1]
+    domain = [a, b]
+    return domain

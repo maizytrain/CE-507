@@ -37,14 +37,14 @@ def assembleStiffnessMatrix(problem, uspline_bext):
                 #print(K[idx_a, idx_b])
     return K
 
-problem = { "elastic_modulus": 100,
-                     "area": 0.01,
-                     "length": 1.0,
-                     "traction": { "value": 1e-3, "position": 1.0 },
-                     "displacement": { "value": 0.0, "position": 0.0 },
-                     "body_force": 0.0 }
-uspline_bext = bext.readBEXT( "test_one_linear_C0_element.json" )
-print(assembleStiffnessMatrix( problem = problem, uspline_bext = uspline_bext ))
+# problem = { "elastic_modulus": 100,
+#                      "area": 0.01,
+#                      "length": 1.0,
+#                      "traction": { "value": 1e-3, "position": 1.0 },
+#                      "displacement": { "value": 0.0, "position": 0.0 },
+#                      "body_force": 0.0 }
+# uspline_bext = bext.readBEXT( "test_one_linear_C0_element.json" )
+# print(assembleStiffnessMatrix( problem = problem, uspline_bext = uspline_bext ))
 
 
 

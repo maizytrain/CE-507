@@ -23,12 +23,38 @@ def computeSolution( problem, uspline_bext ):
 
 def assembleSolution( coeff, problem, uspline_bext ):
     # Your code goes here
+    idx = displacementIndexLocation(problem, uspline_bext)
+
+    coeff = numpy.insert(coeff, idx, problem["displacement"]["value"], 0)
+
     return coeff
+
+def displacementIndexLocation(problem, uspline_bext):
+    elem_id = bext.getElementIdContainingPoint(uspline_bext, problem["displacement"]["position"])
+    node_list = bext.getElementNodeIds(uspline_bext, elem_id)
+    elem_domain = bext.getElementDomain(uspline_bext, elem_id)
+
+    idx = 0    
+    if (problem["displacement"]["position"] == elem_domain[0]):
+        idx = 0
+    else:
+        written = False
+        for i in range(len(node_list)):
+            if ( problem["displacement"]["position"] < (elem_domain[1] - elem_domain[0]) * (2 * i + 1) / ((len(node_list) - 1) * 2) + elem_domain[0] and written == False):
+                idx = node_list[i]
+                written = True
+
+    return idx
 
 def applyDisplacement( problem, stiffness_matrix, force_vector, uspline_bext ):
     # Your code goes here
-    idx = bext.getElementIdContainingPoint(uspline_bext, problem["displacement"]["position"])
-    print("idx = ", idx)
+    idx = displacementIndexLocation(problem, uspline_bext)
+
+    force_vector = force_vector - stiffness_matrix[:, idx] * problem["displacement"]["value"]
+    stiffness_matrix = numpy.delete(stiffness_matrix, idx, 0)
+    stiffness_matrix = numpy.delete(stiffness_matrix, idx, 1)
+    force_vector = numpy.delete(force_vector, idx, 0)
+
     return stiffness_matrix, force_vector
 
 def applyTraction( problem, force_vector, uspline_bext ):
@@ -42,7 +68,7 @@ def applyTraction( problem, force_vector, uspline_bext ):
     change_expr = basis.affine_mapping_1D(elem_domain, [0, 1], x)
 
     for n in range( 0, elem_degree + 1 ):
-        elem_bernstein_basis[n] = basis.createBernsteinBasis1DDeriv(elem_degree, n, 1)
+        elem_bernstein_basis[n] = basis.createBernsteinBasis1DDeriv(elem_degree, n, 0)
         elem_bernstein_basis[n] = elem_bernstein_basis[n].subs(zeta, change_expr)
     elem_spline_basis = numpy.matmul(elem_ext_oper, elem_bernstein_basis)
 
@@ -50,8 +76,7 @@ def applyTraction( problem, force_vector, uspline_bext ):
         idx_a = bext.getElementNodeIds(uspline_bext, elem_id)[i]
         # print(elem_spline_basis[i] * problem["traction"]["value"])
         # print(idx_a)
-        force_vector[idx_a] += elem_spline_basis[i] * problem["traction"]["value"]
-
+        force_vector[idx_a] += (elem_spline_basis[i] * problem["traction"]["value"]).subs(x, elem_domain[1] - elem_domain[0])
 
     return force_vector
 
@@ -79,7 +104,7 @@ def assembleForceVector( problem, uspline_bext ):
         change_expr = basis.affine_mapping_1D(elem_domain, [0, 1], x)
 
         for n in range( 0, elem_degree + 1 ):
-            elem_bernstein_basis[n] = basis.createBernsteinBasis1DDeriv(elem_degree, n, 1)
+            elem_bernstein_basis[n] = basis.createBernsteinBasis1DDeriv(elem_degree, n, 0)
             elem_bernstein_basis[n] = elem_bernstein_basis[n].subs(zeta, change_expr)
         elem_spline_basis = numpy.matmul(elem_ext_oper, elem_bernstein_basis)
 
@@ -93,16 +118,31 @@ def assembleForceVector( problem, uspline_bext ):
 
     return force_vector
 
-problem = { "elastic_modulus": 100,
-                       "area": 0.01,
-                       "length": 1.0,
-                       "traction": { "value": 1e-3, "position": 1.0 },
-                       "displacement": { "value": 0.0, "position": 0.0 },
-                       "body_force": 1e-3 }
-uspline_bext = bext.readBEXT( "test_simple.json" )
+test = 2
+if (test == 1):
+    problem = { "elastic_modulus": 100,
+                        "area": 0.01,
+                        "length": 1.0,
+                        "traction": { "value": 1e-3, "position": 1.0 },
+                        "displacement": { "value": 0.0, "position": 0.0 },
+                        "body_force": 1e-3 }
+    uspline_bext = bext.readBEXT( "test_simple.json" )
 
-print(computeSolution( problem = problem, uspline_bext = uspline_bext ))
-#print(assembleForceVector(problem, uspline_bext))
+    print(computeSolution( problem = problem, uspline_bext = uspline_bext ))
+    gold_sol_coeff = numpy.array( [ 0.0, 11.0 / 18000.0, 1.0 / 900.0, 3.0 / 2000.0 ] )
+    #print(assembleForceVector(problem, uspline_bext))
+elif (test == 2):
+    problem = { "elastic_modulus": 200e9,
+                "area": 1.0,
+                "length": 5.0,
+                "traction": { "value": 9810.0, "position": 5.0 },
+                "displacement": { "value": 0.0, "position": 0.0 },
+                "body_force": 784800.0 }
+#    spline_space = { "domain": [0, problem[ "length" ]], "degree": [ 2, 2 ], "continuity": [ -1, 1, -1 ] }
+#    uspline.make_uspline_mesh( spline_space, "test_textbook_problem" )
+    uspline_bext = bext.readBEXT( "test_textbook_problem.json" )
+    print(computeSolution( problem = problem, uspline_bext = uspline_bext ))
+    gold_sol_coeff = numpy.array( [0.0, 2.45863125e-05, 4.92339375e-05, 4.92952500e-05] )
 
 ## UTILITY CODE
 def evaluateSolutionAt( x, coeff, uspline_bext ):
@@ -114,7 +154,7 @@ def evaluateSolutionAt( x, coeff, uspline_bext ):
     sol = 0.0
     for n in range( 0, len( elem_nodes ) ):
         curr_node = elem_nodes[n]
-        sol += coeff[curr_node] * basis.evalSplineBasis1D( extraction_operator = elem_extraction_operator, basis_idx = n, domain = elem_domain, variate = x )
+        sol += coeff[curr_node] * basis.evalSplineBasisDeriv1D( extraction_operator = elem_extraction_operator, basis_idx = n, deriv = 0, domain = elem_domain, variate = x )
     return sol
 
 def computeElementFitError( problem, coeff, uspline_bext, elem_id ):
@@ -193,3 +233,5 @@ def plotExactSolution( problem ):
         y[i] = evaluateExactSolutionAt( problem, x[i] )
     plt.plot( x, y )
     plt.show()
+
+plotCompareGoldTestSolution(gold_sol_coeff, computeSolution( problem = problem, uspline_bext = uspline_bext ), uspline_bext)
