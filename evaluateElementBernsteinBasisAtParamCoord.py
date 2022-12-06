@@ -13,7 +13,7 @@ def evaluateElementBernsteinBasisAtParamCoord( uspline, elem_id, param_coord ):
 
 def evaluateElementSplineBasisAtParamCoord( uspline, elem_id, param_coord ):
     elem_ext_operator = read.getElementExtractionOperator(uspline, elem_id) # Get the extraction operator of the element
-    print(elem_ext_operator)
+    #print(elem_ext_operator)
     elem_bernstein_basis = evaluateElementBernsteinBasisAtParamCoord( uspline, elem_id, param_coord )
     elem_spline_basis = numpy.matmul(elem_ext_operator, elem_bernstein_basis)
     #print("param_coord =" + str(param_coord) + ", basis = " + str(elem_spline_basis))
@@ -50,7 +50,7 @@ def getLineColor( idx ):
     num_colors = len( colors )
     mod_idx = idx % num_colors
     return matplotlib.colors.TABLEAU_COLORS[ colors[ mod_idx ] ]
-
-uspline = read.readBEXT( "quadratic_bspline.json" )
-plotUsplineBasis( uspline, "element" )
-plotUsplineBasis( uspline, "node" )
+    
+#uspline = read.readBEXT( "quadratic_bspline.json" )
+#plotUsplineBasis( uspline, "element" )
+#plotUsplineBasis( uspline, "node" )

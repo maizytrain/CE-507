@@ -83,6 +83,7 @@ class Test_evalBernsteinBasisDeriv( unittest.TestCase ):
        def test_quadratic_1st_deriv_at_gauss_pts( self ):
               x = [ -1.0 / math.sqrt(3.0) , 1.0 / math.sqrt(3.0) ]
               x = [ basis.affine_mapping_1D( [-1, 1], [0, 1], xi ) for xi in x ]
+              print(x)
               self.assertAlmostEqual( first = basis.evalBernsteinBasisDeriv( degree = 2, basis_idx = 0, deriv = 1, domain = [0, 1], variate = x[0] ), second = -1.0 - 1/( math.sqrt(3) ), delta = 1e-12 )
               self.assertAlmostEqual( first = basis.evalBernsteinBasisDeriv( degree = 2, basis_idx = 0, deriv = 1, domain = [0, 1], variate = x[1] ), second = -1.0 + 1/( math.sqrt(3) ), delta = 1e-12 )
               self.assertAlmostEqual( first = basis.evalBernsteinBasisDeriv( degree = 2, basis_idx = 1, deriv = 1, domain = [0, 1], variate = x[0] ), second = +2.0 / math.sqrt(3), delta = 1e-12 )
